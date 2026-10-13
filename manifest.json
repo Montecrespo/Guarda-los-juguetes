@@ -1,0 +1,17 @@
+{
+  "name": "Juego de Clasificación Escolar",
+  "short_name": "ClasificaJuegos",
+  "description": "Juego educativo interactivo para aprender a clasificar objetos por niveles.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#e8f5e9",
+  "theme_color": "#2e7d32",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "imagenes/juguete_oso.png",
+      "sizes": "200x200",
+      "type": "image/png"
+    }
+  ]
+}

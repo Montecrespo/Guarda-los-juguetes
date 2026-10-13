@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>El Juego de Clasificar - Edición Escolar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Botón flotante para controlar la música -->
+  <button id="muteBtn" class="mute-button" title="Activar/Desactivar Música">🔊</button>
+
+  <!-- PANTALLA DE BIENVENIDA -->
+  <div id="welcomeScreen" class="game-screen-overlay">
+    <div class="screen-card">
+      <div class="screen-icon">🧺🎒🍎</div>
+      <h2>¡Bienvenidos al Juego de Clasificar!</h2>
+      <p>Ayúdanos a ordenar el cuarto, la cocina y la escuela guardando cada objeto en su lugar antes de que se acabe el tiempo.</p>
+      <button id="startTrackBtn" class="action-screen-btn start-btn-color">¡Comenzar a Jugar! 🚀</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA FINAL (VICTORIA / GAME OVER) -->
+  <div id="endScreen" class="game-screen-overlay" style="display: none;">
+    <div class="screen-card">
+      <div id="endIcon" class="screen-icon">🏆</div>
+      <h2 id="endTitle">¡Felicidades, Campeón!</h2>
+      <p id="endMessage">Has completado todos los niveles con éxito.</p>
+      <div class="final-score">⭐ Puntaje Final: <span id="finalScoreCount">0</span> pts</div>
+      <button id="restartTrackBtn" class="action-screen-btn restart-btn-color">🔄 Volver a Jugar</button>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
+  <div class="game-container">
+    <div class="top-bar">
+      <div class="level-badge" id="levelBadge">Nivel 1</div>
+      <div class="score-box">⭐ Puntos: <span id="scoreCount">0</span></div>
+      <div class="timer-box">⏱️ Tiempo: <span id="timeCount">30</span>s</div>
+    </div>
+    
+    <h1 id="gameInstruction">🧺 ¡Pon solo los JUGUETES en la caja de cartón!</h1>
+    
+    <div class="items-container" id="itemsRoom"></div>
+
+    <div class="box-wrapper">
+      <canvas id="particleCanvas"></canvas>
+      <div class="box-container">
+        <img src="imagenes/caja-cerrada.png" id="cardboardBox" alt="Caja de cartón">
+      </div>
+    </div>
+
+    <div id="feedbackMessage" class="message-box">¡Arrastra el objeto correcto!</div>
+    
+    <div class="actions-container">
+      <button id="nextLevelBtn" class="next-btn" style="display: none;">¡Ir al Siguiente Nivel! 🚀</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <!-- NUEVO: Vinculación de Manifiesto de Aplicación -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- NUEVO: Registro del sistema de instalación y modo offline -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('¡Juego escolar configurado con éxito como PWA offline! 🚀'))
+          .catch(err => console.log('Error de configuración PWA:', err));
+      });
+    }
+  </script>
+</body>
+</html>

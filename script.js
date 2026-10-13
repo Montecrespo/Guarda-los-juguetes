@@ -26,11 +26,9 @@ const IMAGEN_ABIERTA = 'imagenes/caja-abierta.png';
 const sonidoExito = new Audio('sonidos/exito.mp3');
 const sonidoError = new Audio('sonidos/error.mp3');
 const musicaFondo = new Audio('sonidos/musica_fondo.mp3');
-musicaFondo.loop = true;
-musicaFondo.volume = 0.3;
+musicaFondo.loop = true; musicaFondo.volume = 0.3;
 
-canvas.width = 240;
-canvas.height = 300;
+canvas.width = 240; canvas.height = 300;
 
 const niveles = [
   {
@@ -63,7 +61,7 @@ const niveles = [
 ];
 
 let nivelActualIndex = 0, objetivosRequeridos = 0, objetivosGuardados = 0;
-let particles = [], animationFrameId, musicaActiva = false;
+let particles = [], animationFrameId, musicaActiva = false; // <-- CORREGIDO AQUÍ
 let tiempoRestante = 30, idIntervaloTiempo, juegoTerminado = false, puntuacionTotal = 0;
 let elementoTocado = null;
 
@@ -107,9 +105,9 @@ function manejarTouchStart(e) {
   e.preventDefault();
   elementoTocado = e.target;
   const touch = e.touches[0];
-  elementoTocado.dataset.startX = touch.clientX - elementoTocado.offsetLeft;
-  elementoTocado.dataset.startY = touch.clientY - elementoTocado.offsetTop;
-  elementoTocado.style.position = 'absolute';
+  elementoTocado.dataset.offsetX = touch.clientX - elementoTocado.getBoundingClientRect().left;
+  elementoTocado.dataset.offsetY = touch.clientY - elementoTocado.getBoundingClientRect().top;
+  elementoTocado.style.position = 'fixed';
   elementoTocado.style.zIndex = '500';
   cardboardBox.src = IMAGEN_ABIERTA;
   cancelAnimationFrame(animationFrameId);
@@ -120,8 +118,8 @@ function manejarTouchMove(e) {
   if (!elementoTocado || juegoTerminado) return;
   e.preventDefault();
   const touch = e.touches[0];
-  const x = touch.clientX - parseInt(elementoTocado.dataset.startX);
-  const y = touch.clientY - parseInt(elementoTocado.dataset.startY);
+  const x = touch.clientX - parseFloat(elementoTocado.dataset.offsetX);
+  const y = touch.clientY - parseFloat(elementoTocado.dataset.offsetY);
   elementoTocado.style.left = `${x}px`;
   elementoTocado.style.top = `${y}px`;
 }
@@ -130,16 +128,16 @@ function manejarTouchEnd(e) {
   if (!elementoTocado) return;
   e.preventDefault();
   const touch = e.changedTouches[0];
-  const x = touch.clientX;
-  const y = touch.clientY;
   const rectCaja = boxContainer.getBoundingClientRect();
-  const estaSobreCaja = (x >= rectCaja.left && x <= rectCaja.right && y >= rectCaja.top && y <= rectCaja.bottom);
+  const estaSobreCaja = (touch.clientX >= rectCaja.left && touch.clientX <= rectCaja.right && touch.clientY >= rectCaja.top && touch.clientY <= rectCaja.bottom);
   
   if (estaSobreCaja && !juegoTerminado) {
     procesarEntregaElemento(elementoTocado);
   } else {
     elementoTocado.style.position = 'static';
     elementoTocado.style.zIndex = 'auto';
+    elementoTocado.style.left = 'auto';
+    elementoTocado.style.top = 'auto';
   }
   cardboardBox.src = IMAGEN_CERRADA;
   elementoTocado = null;
@@ -152,11 +150,9 @@ function procesarEntregaElemento(elemento) {
   
   if (tipo === nivelActual.objetivo) {
     elemento.style.display = 'none';
-    objetivosGuardados++;
-    puntuacionTotal += 10;
+    objetivosGuardados++; puntuacionTotal += 10;
     scoreCountEl.textContent = puntuacionTotal;
-    sonidoExito.currentTime = 0;
-    sonidoExito.play().catch(() => {});
+    sonidoExito.currentTime = 0; sonidoExito.play().catch(() => {});
 
     if (objetivosGuardados === objetivosRequeridos) {
       clearInterval(idIntervaloTiempo);
@@ -172,12 +168,11 @@ function procesarEntregaElemento(elemento) {
       feedbackMessage.style.color = "#2980b9";
     }
   } else {
-    elemento.style.position = 'static';
-    elemento.style.zIndex = 'auto';
+    elemento.style.position = 'static'; elemento.style.zIndex = 'auto';
+    elemento.style.left = 'auto'; elemento.style.top = 'auto';
     puntuacionTotal = Math.max(0, puntuacionTotal - 5);
     scoreCountEl.textContent = puntuacionTotal;
-    sonidoError.currentTime = 0;
-    sonidoError.play().catch(() => {});
+    sonidoError.currentTime = 0; sonidoError.play().catch(() => {});
     feedbackMessage.textContent = "¡Ups! Eso no va ahí 🪐 (-5 pts)";
     feedbackMessage.style.color = "#c0392b";
   }
@@ -191,8 +186,7 @@ function manejarTiempo() {
 }
 
 function desplegarPantallaFinal(esVictoria) {
-  juegoTerminado = true;
-  clearInterval(idIntervaloTiempo);
+  juegoTerminado = true; clearInterval(idIntervaloTiempo);
   finalScoreCount.textContent = puntuacionTotal;
   if (esVictoria) {
     endIcon.textContent = "🏆"; endTitle.textContent = "¡Felicidades, Campeón!";
@@ -234,8 +228,8 @@ class StarParticle {
   update() { this.x += this.speedX; this.y += this.speedY; this.alpha -= 0.02; }
   draw() {
     ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath(); ctx.fillStyle = this.color;
-    let spikes = 5, outerRadius = this.size, innerRadius = this.size / 2;
-    let rot = Math.PI / 2 * 3, x = this.x, y = this.y, step = Math.PI / spikes;
+let spikes = 5, outerRadius = this.size, innerRadius = this.size / 2;
+let rot = Math.PI / 2 * 3, x = this.x, y = this.y, step = Math.PI / spikes;
 ctx.moveTo(this.x, this.y - outerRadius);
 for (let i = 0; i < spikes; i++) {
 x = this.x + Math.cos(rot) * outerRadius; y = this.y + Math.sin(rot) * outerRadius;
